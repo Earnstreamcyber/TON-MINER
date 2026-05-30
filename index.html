@@ -1,9 +1,138 @@
-<!-- VIP Booster Section -->
-<div class="vip-section">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON Miner - VIP Booster Plans</title>
+    <style>
+        /* Base Background & Styling matching image_632180.png */
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, #002d3f 0%, #00141d 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Container to fit beautifully inside Telegram Mini App view */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Title styling matching your app's headers */
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Vertical Grid for Cards */
+        .vip-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Premium Glassmorphism Card Style matching the deep teal theme */
+        .vip-card {
+            background: rgba(0, 36, 50, 0.7);
+            border: 1px solid rgba(0, 155, 235, 0.25);
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        /* Mobile Tap Effect */
+        .vip-card:active {
+            transform: scale(0.98);
+            border-color: rgba(0, 155, 235, 0.6);
+        }
+
+        /* Card Header Layout */
+        .vip-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .plan-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .plan-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: #009beb; /* Exact bright TON blue from image_632180.png */
+        }
+
+        /* Info Row inside Card Body */
+        .vip-card-body {
+            margin-bottom: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #a0b6c1; /* Balanced muted text */
+            margin-bottom: 6px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-row strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Pill Shape Button matching top elements in image_632180.png */
+        .vip-buy-btn {
+            background: #009beb; /* Vibrant Blue */
+            color: #ffffff;
+            border: none;
+            border-radius: 50px; /* Smooth Pill Shape */
+            padding: 11px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(0, 155, 235, 0.3);
+            transition: background 0.2s;
+        }
+
+        .vip-buy-btn:hover {
+            background: #0083c7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
     <h3 class="section-title">VIP BOOSTER PLANS ⚡</h3>
     
     <div class="vip-grid">
-        <!-- Plan 1 -->
         <div class="vip-card">
             <div class="vip-card-header">
                 <span class="plan-name">⚡ TON SPARK</span>
@@ -16,7 +145,6 @@
             <button class="vip-buy-btn">BUY NOW</button>
         </div>
 
-        <!-- Plan 2 -->
         <div class="vip-card">
             <div class="vip-card-header">
                 <span class="plan-name">🌊 TON PULSE</span>
@@ -29,7 +157,6 @@
             <button class="vip-buy-btn">BUY NOW</button>
         </div>
 
-        <!-- Plan 3 -->
         <div class="vip-card">
             <div class="vip-card-header">
                 <span class="plan-name">👑 TON PRIME</span>
@@ -42,7 +169,6 @@
             <button class="vip-buy-btn">BUY NOW</button>
         </div>
 
-        <!-- Plan 4 -->
         <div class="vip-card">
             <div class="vip-card-header">
                 <span class="plan-name">🌌 TON INFINITY</span>
@@ -56,3 +182,6 @@
         </div>
     </div>
 </div>
+
+</body>
+</html>
