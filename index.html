@@ -1,521 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Reward Pro - High Energy</title>
+<!-- VIP Booster Section -->
+<div class="vip-section">
+    <h3 class="section-title">VIP BOOSTER PLANS ⚡</h3>
     
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://adsgram.ai/sdk/v1/adsgram-sdk.js"></script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: #1f2732; color: #ffffff;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            overflow-x: hidden; overflow-y: auto; 
-        }
-
-        /* --- Toast Notification --- */
-        #toast {
-            visibility: hidden; min-width: 280px; background: #273241;
-            color: #fff; text-align: center; border-radius: 16px; padding: 16px;
-            position: fixed; z-index: 10000; left: 50%; bottom: 130px;
-            transform: translateX(-50%); font-size: 14px; font-weight: 700;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #2aabed;
-            opacity: 0; transition: opacity 0.3s, bottom 0.3s;
-        }
-        #toast.show { visibility: visible; opacity: 1; bottom: 140px; }
-
-        /* --- Modal Overlay --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: #1f2732; border-radius: 20px; padding: 25px; max-width: 90%; max-height: 80vh;
-            overflow-y: auto; border: 2px solid #2aabed; position: relative;
-        }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 28px; cursor: pointer; color: #94A3B8; }
-
-        /* --- Header --- */
-        header {
-            background: linear-gradient(135deg, #2aabed 0%, #1f2732 100%);
-            padding: 25px 20px; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(42, 171, 237, 0.3); position: sticky; top: 0; z-index: 1000;
-        }
-        @keyframes rocket-fly {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-15px) rotate(5deg); }
-        }
-        .rocket-box { font-size: 50px; animation: rocket-fly 2s infinite ease-in-out; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
-        .balance-label { font-size: 14px; font-weight: 800; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; color: #fbbf24;}
-        .balance-amount { font-size: 34px; font-weight: 800; }
-
-        .content-area { flex: 1; padding: 20px; padding-bottom: 150px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-tag { font-size: 18px; font-weight: 800; color: #ffffff; text-transform: uppercase; margin: 25px 0 10px 0; }
-        .card { background: #273241; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #3d4f66; }
-        
-        .btn {
-            width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
-            font-weight: 800; cursor: pointer; transition: transform 0.1s, filter 0.2s; display: block; text-align: center;
-        }
-        .btn-blue { background: #2aabed; color: white; }
-        .btn-green { background: #10B981; color: white; }
-        .btn-purple { background: linear-gradient(90deg, #2aabed, #1f2732); border: 1px solid #2aabed; color: white; }
-        .btn:active { transform: scale(0.94); filter: brightness(0.8); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* --- 7-Day Streak Calendar --- */
-        .streak-calendar {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin: 20px 0;
-        }
-        .day-box {
-            background: #1f2732; border: 2px solid #3d4f66; border-radius: 12px; padding: 12px;
-            text-align: center; font-weight: 800; cursor: pointer; transition: all 0.3s;
-        }
-        .day-box.completed { background: #10B981; border-color: #059669; }
-        .day-box.active { background: #2aabed; border-color: #1d9bd9; box-shadow: 0 0 15px rgba(42, 171, 237, 0.6); }
-        .day-box.locked { opacity: 0.4; }
-        .day-box-day { font-size: 12px; color: #94A3B8; }
-        .day-box-reward { font-size: 14px; color: #fbbf24; margin-top: 5px; }
-
-        /* --- Wheel CSS --- */
-        .wheel-container { display: flex; justify-content: center; align-items: center; margin: 20px 0 30px 0; position: relative; }
-        .wheel-outer {
-            width: 180px; height: 180px; border-radius: 50%; border: 8px solid #2aabed;
-            background: conic-gradient(#EF4444 0deg 60deg, #2aabed 60deg 120deg, #10B981 120deg 180deg, #F59E0B 180deg 240deg, #2aabed 240deg 300deg, #EC4899 300deg 360deg);
-            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative;
-        }
-        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #273241; border: 4px solid #ffffff; border-radius: 50%; z-index: 5; }
-        .wheel-pointer { position: absolute; top: -15px; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid #ffffff; z-index: 10; }
-
-        .input-box { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #3d4f66; background: #1f2732; color: white; margin: 10px 0; font-size: 14px; outline: none; }
-
-        /* --- History List --- */
-        .history-item {
-            background: #1f2732; padding: 12px; border-radius: 10px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #2aabed;
-        }
-        .history-amount { font-weight: 800; color: #fbbf24; }
-        .history-date { font-size: 12px; color: #94A3B8; }
-
-        /* --- Navbar --- */
-        nav {
-            position: fixed; bottom: 0; width: 100%; background: #151a22; display: flex; justify-content: space-around;
-            padding: 15px 5px; border-top: 1px solid #273241; height: 115px; align-items: center; z-index: 1000;
-        }
-        .nav-item { color: #64748B; font-size: 11px; font-weight: 800; text-align: center; flex: 1; cursor: pointer; transition: color 0.3s;}
-        .nav-item.active { color: #2aabed; }
-        .nav-icon { font-size: 26px; display: block; margin-bottom: 4px; transition: transform 0.3s;}
-        .nav-item.active .nav-icon { transform: translateY(-5px); }
-    </style>
-</head>
-<body>
-
-    <div id="toast">Message here</div>
-
-    <div id="streakModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeStreakModal()">✕</span>
-            <h2 style="text-align: center; color: #2aabed; margin-bottom: 20px;">🗓️ 7-DAY STREAK</h2>
-            <div id="streakCalendar" class="streak-calendar"></div>
-            <div style="background: rgba(42, 171, 237, 0.1); padding: 15px; border-radius: 12px; margin-top: 20px; border-left: 4px solid #2aabed;">
-                <p style="font-size: 13px; color: #e2e8f0; line-height: 1.8;">
-                    <strong>📌 Rules:</strong><br>
-                    ✅ Claim daily to grow your streak<br>
-                    💰 Earnings increase by 50% daily<br>
-                    ⚠️ Skip 1 day = Streak breaks! Reset to Day 1
-                </p>
+    <div class="vip-grid">
+        <!-- Plan 1 -->
+        <div class="vip-card">
+            <div class="vip-card-header">
+                <span class="plan-name">⚡ TON SPARK</span>
+                <span class="plan-price">$10</span>
             </div>
-            <button class="btn btn-blue" style="margin-top: 15px;" onclick="closeStreakModal()">GOT IT! 👍</button>
+            <div class="vip-card-body">
+                <div class="info-row"><span>Daily Earning:</span> <strong>0.30 - 0.50 TON</strong></div>
+                <div class="info-row"><span>Referral Bonus:</span> <strong>0%</strong></div>
+            </div>
+            <button class="vip-buy-btn">BUY NOW</button>
+        </div>
+
+        <!-- Plan 2 -->
+        <div class="vip-card">
+            <div class="vip-card-header">
+                <span class="plan-name">🌊 TON PULSE</span>
+                <span class="plan-price">$20</span>
+            </div>
+            <div class="vip-card-body">
+                <div class="info-row"><span>Daily Earning:</span> <strong>0.70 - 1.00 TON</strong></div>
+                <div class="info-row"><span>Referral Bonus:</span> <strong>5%</strong></div>
+            </div>
+            <button class="vip-buy-btn">BUY NOW</button>
+        </div>
+
+        <!-- Plan 3 -->
+        <div class="vip-card">
+            <div class="vip-card-header">
+                <span class="plan-name">👑 TON PRIME</span>
+                <span class="plan-price">$30</span>
+            </div>
+            <div class="vip-card-body">
+                <div class="info-row"><span>Daily Earning:</span> <strong>1.50 - 2.20 TON</strong></div>
+                <div class="info-row"><span>Referral Bonus:</span> <strong>10%</strong></div>
+            </div>
+            <button class="vip-buy-btn">BUY NOW</button>
+        </div>
+
+        <!-- Plan 4 -->
+        <div class="vip-card">
+            <div class="vip-card-header">
+                <span class="plan-name">🌌 TON INFINITY</span>
+                <span class="plan-price">$50</span>
+            </div>
+            <div class="vip-card-body">
+                <div class="info-row"><span>Daily Earning:</span> <strong>3.50 - 5.00 TON</strong></div>
+                <div class="info-row"><span>Referral Bonus:</span> <strong>20%</strong></div>
+            </div>
+            <button class="vip-buy-btn">BUY NOW</button>
         </div>
     </div>
-
-    <header>
-        <div class="balance-container">
-            <span class="balance-label" id="header-username">GUEST USER 👤</span>
-            <div class="balance-amount">$<span id="user-balance">0.00</span></div>
-        </div>
-        <div class="rocket-box">🚀</div>
-    </header>
-
-    <div class="content-area">
-        
-        <div id="earn" class="tab-content active">
-            <div class="section-tag">⚡ ENERGY SURGE</div>
-            <div class="card" style="border-left: 6px solid #2aabed;">
-                <h3>Daily Check-in 🎁</h3>
-                <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim daily to boost earnings!</p>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button id="daily-btn" class="btn btn-blue" onclick="showStreakModal()">VIEW STREAK</button>
-                    <button id="claim-btn" class="btn btn-blue" onclick="collectDaily()" style="background: #1d9bd9;">CLAIM NOW</button>
-                </div>
-                <p id="timer-msg" style="font-size: 12px; color: #fbbf24; margin-top: 10px; text-align: center;"></p>
-            </div>
-
-            <div class="section-tag">🎡 SPINNING WHEEL</div>
-            <div class="card" style="border: 2px solid #2aabed;">
-                <h2 style="color: #2aabed; text-align: center; font-size: 22px;">SPIN NOW🔥</h2>
-                <p id="spin-limit" style="font-size: 12px; color: #fbbf24; text-align: center; font-weight: 800; margin-bottom: 15px;">Spins Left: <span id="spins-remaining">10</span>/10</p>
-                <div class="wheel-container">
-                    <div class="wheel-pointer"></div>
-                    <div id="wheel" class="wheel-outer"><div class="wheel-center"></div></div>
-                </div>
-                <button id="spin-btn" class="btn btn-purple" onclick="startSpin()">SPIN & WIN 💸</button>
-            </div>
-        </div>
-
-        <div id="team" class="tab-content">
-            <div class="section-tag">👥 TEAM SQUAD</div>
-            <div class="card">
-                <h3>Your Invite Link</h3>
-                <input type="text" id="ref-link" class="input-box" value="Loading link..." readonly>
-                <button class="btn btn-blue" onclick="copyLink()">COPY LINK 📋</button>
-                <div style="background: rgba(42, 171, 237, 0.1); padding: 15px; border-radius: 12px; margin-top: 15px; border-left: 4px solid #2aabed;">
-                    <p style="font-size: 12px; color: #e2e8f0;"><strong>Total Invites:</strong></p>
-                    <h2 style="color: #fbbf24; font-size: 32px; margin-top: 5px;" id="invite-count">0</h2>
-                </div>
-            </div>
-        </div>
-
-        <div id="cash" class="tab-content">
-            <div class="section-tag">💰 WITHDRAW FUNDS</div>
-            <div class="card">
-                <h1 style="color: #10B981; text-align: center; font-size: 40px;">$<span id="withdraw-balance">0.00</span></h1>
-                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW : $100.00</p>
-                
-                <h4 style="margin-top: 20px; color: #ffffff;">Select Network:</h4>
-                <select id="network-select" class="input-box" style="margin-top: 10px;">
-                    <option value="trc20">USDT (TRC20)</option>
-                    <option value="bep20">USDT (BEP20)</option>
-                </select>
-                
-                <h4 style="margin-top: 15px; color: #ffffff;">Wallet Address:</h4>
-                <input type="text" id="wallet-address" class="input-box" placeholder="Enter your wallet address">
-                
-                <button class="btn btn-blue" style="margin-top: 15px; background: #10B981;" onclick="handleWithdraw()">WITHDRAW</button>
-
-                <h4 style="margin-top: 25px; color: #ffffff; margin-bottom: 15px;">📋 Withdrawal History</h4>
-                <div id="withdraw-history"></div>
-            </div>
-        </div>
-
-        <div id="me" class="tab-content">
-            <div class="section-tag">👤 MY ACCOUNT</div>
-            <div class="card" style="text-align: center;">
-                <div id="user-photo" style="font-size: 60px;">🤴</div>
-                <h2 id="user-name">Guest User</h2>
-                <p id="user-telegram" style="color: #2aabed; font-weight: 800; margin: 5px 0;">@username</p>
-                <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
-            </div>
-        </div>
-
-    </div>
-
-    <nav>
-        <div class="nav-item active" onclick="switchTab('earn', this)"><span class="nav-icon">🏠</span>EARN</div>
-        <div class="nav-item" onclick="switchTab('team', this)"><span class="nav-icon">👥</span>TEAM</div>
-        <div class="nav-item" onclick="switchTab('cash', this)"><span class="nav-icon">💰</span>CASH</div>
-        <div class="nav-item" onclick="switchTab('me', this)"><span class="nav-icon">👤</span>ME</div>
-    </nav>
-
-    <script>
-        // --- CONFIGURATION LINKS ---
-        const DIRECT_SMART_LINK = "YOUR_ADSTERRA_OR_MONETAG_LINK_HERE"; 
-        const ADMIN_TELEGRAM_LINK = "https://t.me/YOUR_ADMIN_USERNAME"; 
-        const MY_BOT_USERNAME = "Earnstream693_bot"; 
-
-        // ===== REWARD SYSTEM =====
-        const DAILY_REWARDS = [0.05, 0.075, 0.1125, 0.169, 0.253, 0.380, 0.570]; // Day 1-7 (50% increase)
-        const SPIN_REWARDS = { common: [0.01, 0.02, 0.03], rare: 0.10, rareChance: 0.01 };
-        const POPUNDER_COOLDOWN = 120000; // 2 minutes
-
-        // ===== STATE VARIABLES =====
-        let balance = parseFloat(localStorage.getItem('balance') || '0');
-        let userData = { invites: parseInt(localStorage.getItem('invites') || '0'), telegram_id: null };
-        let streakData = JSON.parse(localStorage.getItem('streakData') || '{"currentDay": 0, "lastClaimDate": null, "totalClaimed": 0}');
-        let spins = { today: parseInt(localStorage.getItem('spinsToday') || '0'), lastSpinTime: 0 };
-        let withdrawHistory = JSON.parse(localStorage.getItem('withdrawHistory') || '[]');
-        let lastPopunderTime = 0;
-
-        const todayStr = new Date().toDateString();
-        
-        // Reset daily data
-        if(localStorage.getItem('lastSessionDate') !== todayStr) {
-            spins = { today: 0, lastSpinTime: 0 };
-            localStorage.setItem('spinsToday', '0');
-            localStorage.setItem('lastSessionDate', todayStr);
-        }
-
-        // ===== STREAK SYSTEM =====
-        function getStreakDay() {
-            const now = new Date();
-            const lastClaim = streakData.lastClaimDate ? new Date(streakData.lastClaimDate) : null;
-            
-            if(!lastClaim) return 1;
-            
-            const dayDiff = Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24));
-            
-            if(dayDiff === 0) return streakData.currentDay; // Same day
-            if(dayDiff === 1) return streakData.currentDay + 1; // Next day
-            return 1; // Streak broken
-        }
-
-        function resetStreak() {
-            streakData = { currentDay: 0, lastClaimDate: null, totalClaimed: 0 };
-            localStorage.setItem('streakData', JSON.stringify(streakData));
-        }
-
-        function showStreakModal() {
-            const modal = document.getElementById('streakModal');
-            const calendar = document.getElementById('streakCalendar');
-            calendar.innerHTML = '';
-            
-            for(let i = 1; i <= 7; i++) {
-                const box = document.createElement('div');
-                box.className = 'day-box';
-                
-                if(i < streakData.currentDay) box.classList.add('completed');
-                if(i === streakData.currentDay) box.classList.add('active');
-                if(i > streakData.currentDay) box.classList.add('locked');
-                
-                box.innerHTML = `
-                    <div class="day-box-day">DAY ${i}</div>
-                    <div class="day-box-reward">$${DAILY_REWARDS[i-1].toFixed(3)}</div>
-                `;
-                calendar.appendChild(box);
-            }
-            
-            modal.classList.add('active');
-        }
-
-        function closeStreakModal() {
-            document.getElementById('streakModal').classList.remove('active');
-        }
-
-        function collectDaily() {
-            const nextDay = getStreakDay();
-            
-            if(nextDay === streakData.currentDay && streakData.lastClaimDate === todayStr) {
-                showToast("🚫 Already claimed today!");
-                return;
-            }
-            
-            if(nextDay === 1 && streakData.currentDay > 0) {
-                showToast("🚫 Streak Broken! Start Over");
-                resetStreak();
-            }
-            
-            triggerPopunder();
-            
-            const claimBtn = document.getElementById('claim-btn');
-            claimBtn.disabled = true;
-            claimBtn.innerText = "Verifying... 10s";
-            
-            let countdown = 10;
-            const timer = setInterval(() => {
-                countdown--;
-                if(countdown > 0) {
-                    claimBtn.innerText = `Verifying... ${countdown}s`;
-                } else {
-                    clearInterval(timer);
-                    
-                    const currentDay = Math.min(nextDay, 7);
-                    const reward = DAILY_REWARDS[currentDay - 1];
-                    balance += reward;
-                    
-                    streakData.currentDay = currentDay;
-                    streakData.lastClaimDate = todayStr;
-                    streakData.totalClaimed += reward;
-                    
-                    saveState();
-                    claimBtn.disabled = true;
-                    claimBtn.innerText = `DAY ${currentDay} CLAIMED ✅`;
-                    
-                    showToast(`✅ Claimed $${reward.toFixed(3)}! Day ${currentDay}/7`);
-                    updateUI();
-                }
-            }, 1000);
-        }
-
-        // ===== SPINNING WHEEL =====
-        function getSpinsRemaining() {
-            return 10 - spins.today;
-        }
-
-        let isSpinning = false;
-        function startSpin() {
-            if(isSpinning) return;
-            if(spins.today >= 10) return showToast("🚫 Daily spins limit reached!");
-            
-            const lastSpin = parseInt(localStorage.getItem('lastSpinTime') || '0');
-            if(Date.now() - lastSpin < 60000) { 
-                const wait = Math.ceil((60000 - (Date.now() - lastSpin)) / 1000);
-                return showToast(`⏳ Wait ${wait}s for next spin!`);
-            }
-            
-            triggerPopunder();
-            isSpinning = true;
-            const wheel = document.getElementById('wheel');
-            const randomDeg = Math.floor(Math.random() * 360) + 1800;
-            wheel.style.transition = "transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)";
-            wheel.style.transform = `rotate(${randomDeg}deg)`;
-            
-            setTimeout(() => {
-                isSpinning = false;
-                
-                let reward;
-                if(Math.random() < 0.01) {
-                    reward = SPIN_REWARDS.rare;
-                } else {
-                    reward = SPIN_REWARDS.common[Math.floor(Math.random() * SPIN_REWARDS.common.length)];
-                }
-                
-                balance += reward;
-                spins.today++;
-                localStorage.setItem('lastSpinTime', Date.now());
-                localStorage.setItem('spinsToday', spins.today);
-                
-                saveState();
-                updateUI();
-                showToast(`🎉 Won $${reward.toFixed(2)}!`);
-            }, 4000);
-        }
-
-        // ===== WITHDRAW SYSTEM =====
-        function handleWithdraw() {
-            const walletAddr = document.getElementById('wallet-address').value.trim();
-            const network = document.getElementById('network-select').value;
-            
-            if(!walletAddr) return showToast("⚠️ Enter wallet address!");
-            if(balance < 100) return showToast("🚫 Minimum $100 required!");
-            
-            triggerPopunder();
-            
-            const request = {
-                amount: balance,
-                wallet: walletAddr,
-                network: network,
-                date: new Date().toLocaleString(),
-                status: 'Pending'
-            };
-            
-            withdrawHistory.unshift(request);
-            localStorage.setItem('withdrawHistory', JSON.stringify(withdrawHistory));
-            
-            balance = 0;
-            saveState();
-            
-            document.getElementById('wallet-address').value = '';
-            showToast("✅ YOUR REQUEST HAS BEEN SUBMITTED\nPLEASE WAIT 1-2 WORKING DAYS\nWE APPRECIATE YOUR PATIENCE 🤠💸");
-            
-            renderWithdrawHistory();
-            updateUI();
-        }
-
-        function renderWithdrawHistory() {
-            const container = document.getElementById('withdraw-history');
-            if(!container) return;
-            container.innerHTML = '';
-            withdrawHistory.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <div>
-                        <div class="history-date">${item.date} (${item.network.toUpperCase()})</div>
-                        <div style="font-size: 11px; color: #94A3B8; word-break: break-all;">${item.wallet}</div>
-                    </div>
-                    <div class="history-amount">$${parseFloat(item.amount).toFixed(2)} <span style="font-size: 10px; color: #fbbf24;">[${item.status}]</span></div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        // ===== HELPER FUNCTIONS =====
-        function saveState() {
-            localStorage.setItem('balance', balance.toString());
-            localStorage.setItem('streakData', JSON.stringify(streakData));
-            localStorage.setItem('withdrawHistory', JSON.stringify(withdrawHistory));
-        }
-
-        function updateUI() {
-            document.getElementById('user-balance').innerText = balance.toFixed(2);
-            document.getElementById('withdraw-balance').innerText = balance.toFixed(2);
-            document.getElementById('spins-remaining').innerText = getSpinsRemaining();
-            document.getElementById('invite-count').innerText = userData.invites;
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-
-        function triggerPopunder() {
-            if (Date.now() - lastPopunderTime > POPUNDER_COOLDOWN) {
-                window.open(DIRECT_SMART_LINK, '_blank');
-                lastPopunderTime = Date.now();
-            }
-        }
-
-        function switchTab(tabId, el) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function copyLink() {
-            const linkInput = document.getElementById('ref-link');
-            linkInput.select();
-            linkInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(linkInput.value);
-            showToast("📋 Link copied to clipboard!");
-        }
-
-        // ===== TELEGRAM INIT =====
-        try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tele = window.Telegram.WebApp;
-                tele.ready();
-                tele.expand();
-                const user = tele.initDataUnsafe?.user;
-                if (user) {
-                    userData.telegram_id = user.id;
-                    const username = user.username ? `@${user.username}` : user.first_name;
-                    document.getElementById('header-username').innerText = username.toUpperCase() + " 👤";
-                    document.getElementById('user-name').innerText = user.first_name + (user.last_name ? " " + user.last_name : "");
-                    document.getElementById('user-telegram').innerText = user.username ? `@${user.username}` : `ID: ${user.id}`;
-                    document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=${user.id}`;
-                }
-            }
-        } catch (e) {
-            console.error("Telegram WebApp error:", e);
-        }
-
-        // App Run
-        updateUI();
-        renderWithdrawHistory();
-
-    </script>
-</body>
-</html>
+</div>
